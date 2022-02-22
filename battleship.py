@@ -1,4 +1,4 @@
-#!/usr/local/bin/python3
+# battleship.py
 
 # TODO: Just let the user type letter coordinates and use a dictionary of
 # letters that map to numbers to interpret the coordinates. It'll be much
@@ -163,4 +163,4 @@ player_ships = create_ships()
 computer_ships = create_ships()
 place_player_ships()
 place_computer_ships()
-print_boards()e
+print_boards()

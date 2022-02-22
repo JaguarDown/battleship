@@ -1,4 +1,4 @@
-#!/usr/bin/python
+# Vector.py
 
 class Vector:
 

@@ -1,4 +1,4 @@
-#!/usr/bin/python
+# ConsoleColor.py
 
 # TODO: Change functionality to just return a string so you can print it how
 # you want to.

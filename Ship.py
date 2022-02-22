@@ -1,5 +1,3 @@
-#!/usr/bin/python
-
 # Ship.py
 
 # TODO: Get coordinates function
