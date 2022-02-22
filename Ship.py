@@ -1,6 +1,11 @@
 #!/usr/bin/python
 
-from Coordinates import Coordinates
+# Ship.py
+
+# TODO: Get coordinates function
+
+from Vector import Vector
+from enum import Enum
 
 class Ship:
 
@@ -10,21 +15,28 @@ class Ship:
     size = 0
     is_sunk = False
     is_placed = False
+    location = None
     occupied_squares = []
 
     def __init__(self, name, size):
         self.name = name
         self.size = size
 
-    def place(self, x, y):
-        """
-        To do: validate input coordinates to make sure they're not off of the
-        board or on top of other ships. After adding orientation occupying
-        multiple squares, check for situations like trying to place the first
-        square of a carrier at the far right of the board horizontally which
-        is impossible since the ship can't hang off the edge. You should correct
-        by checking the squares to the left and moving the ship left.
-        """
-        square1 = Coordinates(x, y)
-        self.occupied_squares.insert(0, square1)
-        is_placed = True
+    def place(self, y, x, orientation):
+        self.location = Vector(y, x)
+        self.occupied_squares = self.get_squares(y, x, orientation)
+        self.is_placed = True
+
+    def get_squares(self, y, x, orientation):
+        squares = []
+        if orientation == "H":
+            squares.insert(0, Vector(y, x))
+            for i in range(1, self.size):
+                squares.insert(i, Vector(y, x + i))
+            return squares
+        else:
+            squares.insert(0, Vector(y, x))
+            for i in range(1, self.size):
+                squares.insert(i, Vector(y + i, x))
+            return squares
+    
