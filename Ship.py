@@ -2,39 +2,34 @@
 
 # TODO: Get coordinates function
 
-from Vector import Vector
+from Coordinate import Coordinate
 from enum import Enum
 
 class Ship:
 
-    x = 0
-    y = 0
-    name = ""
-    size = 0
-    is_sunk = False
-    is_placed = False
-    location = None
-    occupied_squares = []
-
     def __init__(self, name, size):
         self.name = name
         self.size = size
+        self.is_sunk = False
+        self.is_placed = False
+        self.location = None
+        self.occupied_sectors = []
 
     def place(self, y, x, orientation):
-        self.location = Vector(y, x)
-        self.occupied_squares = self.get_squares(y, x, orientation)
+        self.location = Coordinate(y, x)
+        self.occupied_sectors = self.get_sectors(y, x, orientation)
         self.is_placed = True
 
-    def get_squares(self, y, x, orientation):
+    def get_sectors(self, y, x, orientation):
         squares = []
         if orientation == "H":
-            squares.insert(0, Vector(y, x))
+            squares.insert(0, Coordinate(y, x))
             for i in range(1, self.size):
-                squares.insert(i, Vector(y, x + i))
+                squares.insert(i, Coordinate(y, x + i))
             return squares
         else:
-            squares.insert(0, Vector(y, x))
+            squares.insert(0, Coordinate(y, x))
             for i in range(1, self.size):
-                squares.insert(i, Vector(y + i, x))
+                squares.insert(i, Coordinate(y + i, x))
             return squares
     

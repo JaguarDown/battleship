@@ -7,7 +7,7 @@
 
 # TODO:  Validate input coordinates to make sure they're not off of the
 #        board or on top of other ships. Check for situations like trying to place the first
-#        square of a carrier at the far right of the board horizontally which
+#        sector of a carrier at the far right of the board horizontally which
 #        is impossible since the ship can't hang off the edge. You should correct
 #        by checking the squares to the left and moving the ship left.
 
@@ -120,14 +120,14 @@ def place_player_ships():
             # we should compare the coordinates to the main board to see if a ship is there.
             # I started with this but the ship doesn't have this data yet before placing. Consider an
             # update method in ship.py to populate occupied_squares
-            for square in ship.get_squares(y, x, orientation):
-                if ocean_grid[square.y][square.x] != "*":
+            for sector in ship.get_sectors(y, x, orientation):
+                if ocean_grid[sector.y][sector.x] != "*":
                     print("You can't place your ship there. Try again.")
-                    print(ocean_grid[square.y][square.x])
+                    print(ocean_grid[sector.y][sector.x])
                     break
             ship.place(y, x, orientation)
-            for square in ship.occupied_squares:
-                ocean_grid[square.y][square.x] = ship.name[0]
+            for sector in ship.occupied_sectors:
+                ocean_grid[sector.y][sector.x] = ship.name[0]
 
 
 def place_computer_ships():
