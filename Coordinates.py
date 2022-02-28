@@ -1,9 +1,6 @@
-# Coordinate.py
+# Coordinates.py
 
-class Coordinate:
-
-    y = 0
-    x = 0
+class Coordinates:
 
     def __init__(self, y, x):
         self.y = y
