@@ -1,31 +1,27 @@
 # battleship.py
 
-# TODO: Just let the user type letter coordinates and use a dictionary of
-# letters that map to numbers to interpret the coordinates. It'll be much
-# easier to just let the program deal with coordinates in integers. I couldn't
-# figure out how to make my list of dictionaries work, apparently dictionaries
-# assume a different order than you put them in which is terrible for grids.
-
 # TODO: Implement colors in the grid for readability, such as a blue ocean, red
 # hits, white misses, and gray ships.
 
+# TODO: Implement multiple squares for ships
+
 # TODO:  Validate input coordinates to make sure they're not off of the
-#        board or on top of other ships. After adding orientation occupying
-#        multiple squares, check for situations like trying to place the first
+#        board or on top of other ships. Check for situations like trying to place the first
 #        square of a carrier at the far right of the board horizontally which
 #        is impossible since the ship can't hang off the edge. You should correct
 #        by checking the squares to the left and moving the ship left.
 
 from random import randint
 from Ship import Ship
-from Vector import Vector
+from Coordinate import Coordinate
 from ConsoleColor import ConsoleColor
+from Grid import Grid
 
 colors = ConsoleColor()
 
-main_board = [[" ", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10",]]
+ocean_grid = Grid("Ocean Grid", False)
 
-tracking_board = [[" ", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10",]]
+target_grid = Grid("Target Grid", True)
 
 # We don't define boards for the computer because it doesn't need to look at
 # one. When the computer fires I think we will just check it against the main
@@ -36,8 +32,6 @@ tracking_board = [[" ", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10",]]
 # to model it after the real world, the ships could just keep track of their
 # hits and the computer's board could keep track of the locations. Food for
 # thought. -ZP 1/22/2020
-
-y_axis = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"]
 
 letter_coordinates = {
     "A": 1,
@@ -52,30 +46,9 @@ letter_coordinates = {
     "J": 10,
 }
 
-def initialize_grid(grid):
-    index = 0
-    for row in range(1, 11):
-        grid.append([colors.blue("*")] * 10)
-        grid[row].insert(0, y_axis[index])
-        index += 1
-
-def print_m_board(board):
-    print("\nMain grid:" + "\n")
-    counter = 0
-    for row in board:
-        if counter == 1:
-            print(" ")
-        print("  ".join(row))
-        counter += 1
-
-def print_t_board(board):
-    print("Tracking grid: " + "\n")
-    for row in board:
-        print(" ".join(row))
-
 def print_boards():
-    print_t_board(tracking_board)
-    print_m_board(main_board)
+    target_grid.print()
+    ocean_grid.print()
 
 def random_row(grid):
     return randint(1, len(grid) - 1)
@@ -142,11 +115,19 @@ def place_player_ships():
             y = coordinates[0]
             x = coordinates[1]
             orientation = get_valid_orientation(ship)
+            # TODO:
             # Before placing the next ship,
             # we should compare the coordinates to the main board to see if a ship is there.
+            # I started with this but the ship doesn't have this data yet before placing. Consider an
+            # update method in ship.py to populate occupied_squares
+            for square in ship.get_squares(y, x, orientation):
+                if ocean_grid[square.y][square.x] != "*":
+                    print("You can't place your ship there. Try again.")
+                    print(ocean_grid[square.y][square.x])
+                    break
             ship.place(y, x, orientation)
             for square in ship.occupied_squares:
-                main_board[square.y][square.x] = ship.name[0]
+                ocean_grid[square.y][square.x] = ship.name[0]
 
 
 def place_computer_ships():
@@ -154,10 +135,10 @@ def place_computer_ships():
     for ship in computer_ships:
         if ship.is_placed == False:
             print("Placing the computer's", ship.name, "at a random location.")
-            ship.place(random_row(tracking_board), random_col(tracking_board), random_orientation())
+            ship.place(random_row(target_grid), random_col(target_grid), random_orientation())
 
-initialize_grid(main_board)
-initialize_grid(tracking_board)
+ocean_grid.initialize()
+target_grid.initialize()
 print_boards()
 player_ships = create_ships()
 computer_ships = create_ships()

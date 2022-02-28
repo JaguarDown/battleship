@@ -1,6 +1,6 @@
-# Vector.py
+# Coordinate.py
 
-class Vector:
+class Coordinate:
 
     y = 0
     x = 0
