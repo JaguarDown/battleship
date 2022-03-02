@@ -15,11 +15,13 @@ class Ship:
         self.location = None
         self.occupied_sectors = []
 
+    # Place the ship on the grid by storing some location and status data.
     def place(self, y, x, orientation):
         self.location = Coordinates(y, x)
         self.occupied_sectors = self.get_occupied_sectors(y, x, orientation)
         self.is_placed = True
 
+    # Calculate the ship's space on the grid and return a list of sectors (Coordinate objects)
     def get_occupied_sectors(self, y, x, orientation):
         squares = []
         if orientation == "H":

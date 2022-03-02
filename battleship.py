@@ -51,10 +51,7 @@ def print_boards():
     target_board.print()
     player_board.print()
 
-def random_row(grid):
-    return randint(1, len(grid) - 1)
-
-def random_col(grid):
+def random_position(grid):
     return randint(1, len(grid) - 1)
 
 def random_orientation():
@@ -145,16 +142,21 @@ def place_computer_ships():
         if not ship.is_placed:
             while True:
                 can_place = True
-                y = random_row(target_board.grid)
-                x = random_row(target_board.grid)
+                # Generate random positions
+                y = random_position(target_board.grid)
+                x = random_position(target_board.grid)
                 orientation = random_orientation()
 
                 # TODO: Extend this loop to shift the ship left or up if part of it will be off the grid
                 # and then recheck until conditions are satisfied.
+
+                # Check all sqaures the ship will be on
                 for sector in ship.get_occupied_sectors(y, x, orientation):
+                    # Make sure it's not off the map
                     if sector.y > 10 or sector.x > 10:
                         can_place = False
                         break
+                    # Make sure there's not a ship there
                     elif target_board.grid[sector.y][sector.x] != colors.blue("*"):
                         can_place = False
                         break
@@ -162,6 +164,7 @@ def place_computer_ships():
                 if can_place:
                     print("\nPlacing the computer's", ship.name, "at a random locatoin.")
                     ship.place(y, x, orientation)
+                    # Rename sectors to ship letter
                     for sector in ship.occupied_sectors:
                         target_board.grid[sector.y][sector.x] = ship.name[0]
                     break

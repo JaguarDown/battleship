@@ -19,9 +19,10 @@ class Board:
         self.y_axis = ["A ", "B ", "C ", "D ", "E ", "F ", "G ", "H ", "I ", "J "]
 
     def initialize(self):
+        # Build the grid
         index = 0
+        # Append 10 more lists of 10 asterisks
         for row in range(1, 11):
-            # Append 10 lists of 10 asterisks
             self.grid.append([self.colors.blue("*")] * 10)
 
             # On each appended row, insert the corresponding y axis coordinate (A, B, C, etc.) to index 0
