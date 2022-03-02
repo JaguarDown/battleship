@@ -2,7 +2,7 @@
 
 # TODO: Get coordinates function
 
-from Coordinate import Coordinate
+from Coordinates import Coordinates
 from enum import Enum
 
 class Ship:
@@ -16,20 +16,20 @@ class Ship:
         self.occupied_sectors = []
 
     def place(self, y, x, orientation):
-        self.location = Coordinate(y, x)
-        self.occupied_sectors = self.get_sectors(y, x, orientation)
+        self.location = Coordinates(y, x)
+        self.occupied_sectors = self.get_occupied_sectors(y, x, orientation)
         self.is_placed = True
 
-    def get_sectors(self, y, x, orientation):
+    def get_occupied_sectors(self, y, x, orientation):
         squares = []
         if orientation == "H":
-            squares.insert(0, Coordinate(y, x))
+            squares.insert(0, Coordinates(y, x))
             for i in range(1, self.size):
-                squares.insert(i, Coordinate(y, x + i))
+                squares.insert(i, Coordinates(y, x + i))
             return squares
         else:
-            squares.insert(0, Coordinate(y, x))
+            squares.insert(0, Coordinates(y, x))
             for i in range(1, self.size):
-                squares.insert(i, Coordinate(y + i, x))
+                squares.insert(i, Coordinates(y + i, x))
             return squares
     

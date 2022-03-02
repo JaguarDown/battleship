@@ -12,16 +12,17 @@
 #        by checking the squares to the left and moving the ship left.
 
 from random import randint
+
+from numpy import can_cast
 from Ship import Ship
-from Coordinate import Coordinate
 from ConsoleColor import ConsoleColor
-from Grid import Grid
+from Board import Board
 
 colors = ConsoleColor()
 
-ocean_grid = Grid("Ocean Grid", False)
+player_board = Board("Player Grid", False)
 
-target_grid = Grid("Target Grid", True)
+target_board = Board("Target Grid", True)
 
 # We don't define boards for the computer because it doesn't need to look at
 # one. When the computer fires I think we will just check it against the main
@@ -47,8 +48,8 @@ letter_coordinates = {
 }
 
 def print_boards():
-    target_grid.print()
-    ocean_grid.print()
+    target_board.print()
+    player_board.print()
 
 def random_row(grid):
     return randint(1, len(grid) - 1)
@@ -110,35 +111,65 @@ def get_valid_orientation(ship):
 def place_player_ships():
     print("\nPlease place your ships on the board.")
     for ship in player_ships:
-        if ship.is_placed == False:
-            coordinates = get_valid_coordinates(ship)
-            y = coordinates[0]
-            x = coordinates[1]
-            orientation = get_valid_orientation(ship)
-            # TODO:
-            # Before placing the next ship,
-            # we should compare the coordinates to the main board to see if a ship is there.
-            # I started with this but the ship doesn't have this data yet before placing. Consider an
-            # update method in ship.py to populate occupied_squares
-            for sector in ship.get_sectors(y, x, orientation):
-                if ocean_grid[sector.y][sector.x] != "*":
-                    print("You can't place your ship there. Try again.")
-                    print(ocean_grid[sector.y][sector.x])
+        if not ship.is_placed:
+            while True:
+                can_place = True
+                coordinates = get_valid_coordinates(ship)
+                y, x = coordinates[0], coordinates[1]
+                orientation = get_valid_orientation(ship)
+            
+                for sector in ship.get_occupied_sectors(y, x, orientation):
+                    if sector.y > 10 or sector.x > 10:
+                        can_place = False
+                        error = "That will hang off the map!"
+                        break
+                    elif player_board.grid[sector.y][sector.x] != colors.blue("*"):
+                        can_place = False
+                        error = "There's a ship in the way!"
+                        break
+                
+                if can_place:
+                    ship.place(y, x, orientation)
+                    for sector in ship.occupied_sectors:
+                        player_board.grid[sector.y][sector.x] = ship.name[0]
                     break
-            ship.place(y, x, orientation)
-            for sector in ship.occupied_sectors:
-                ocean_grid[sector.y][sector.x] = ship.name[0]
+                else:
+                    print(error, " Please try again.")
+                    continue
+
 
 
 def place_computer_ships():
     print("Placing computer ships...")
     for ship in computer_ships:
-        if ship.is_placed == False:
-            print("Placing the computer's", ship.name, "at a random location.")
-            ship.place(random_row(target_grid), random_col(target_grid), random_orientation())
+        if not ship.is_placed:
+            while True:
+                can_place = True
+                y = random_row(target_board.grid)
+                x = random_row(target_board.grid)
+                orientation = random_orientation()
 
-ocean_grid.initialize()
-target_grid.initialize()
+                # TODO: Extend this loop to shift the ship left or up if part of it will be off the grid
+                # and then recheck until conditions are satisfied.
+                for sector in ship.get_occupied_sectors(y, x, orientation):
+                    if sector.y > 10 or sector.x > 10:
+                        can_place = False
+                        break
+                    elif target_board.grid[sector.y][sector.x] != colors.blue("*"):
+                        can_place = False
+                        break
+                
+                if can_place:
+                    print("\nPlacing the computer's", ship.name, "at a random locatoin.")
+                    ship.place(y, x, orientation)
+                    for sector in ship.occupied_sectors:
+                        target_board.grid[sector.y][sector.x] = ship.name[0]
+                    break
+                else:
+                    continue
+
+player_board.initialize()
+target_board.initialize()
 print_boards()
 player_ships = create_ships()
 computer_ships = create_ships()
